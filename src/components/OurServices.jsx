@@ -1,7 +1,10 @@
 import React from 'react';
 import { MdFastfood, MdPrint } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 const OurServices = () => {
+  const navigate = useNavigate();
+
   return (
     <section
       id="services"
@@ -23,9 +26,9 @@ const OurServices = () => {
             Grab delicious food and refreshing beverages across the campus.
           </p>
           <button
-            onClick={() => alert('Order Food/Beverages service clicked!')}
+            onClick={() => navigate('/dashboard', { state: { service: 'food' } })}
             className="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded-md transition-colors duration-300"
->
+          >
             Order Now
           </button>
         </div>
@@ -38,9 +41,9 @@ const OurServices = () => {
             Quick and convenient access to photocopy services and essentials.
           </p>
           <button
-            onClick={() => alert('Photocopy dealing with tuck shop service clicked!')}
-             className="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded-md transition-colors duration-300"
->
+            onClick={() => navigate('/dashboard', { state: { service: 'photocopy' } })}
+            className="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded-md transition-colors duration-300"
+          >
             Visit Now
           </button>
         </div>

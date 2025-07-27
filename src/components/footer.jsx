@@ -19,8 +19,8 @@ const Footer = () => {
           <h3 className="text-lg font-bold text-teal-400 mb-2">Quick Links</h3>
           <ul className="space-y-2 text-sm text-gray-300">
             <li><a href="/" className="hover:text-white transition">Home</a></li>
-            <li><a href="#services" className="hover:text-white transition">Services</a></li>
-            <li><a href="#contact" className="hover:text-white transition">Contact</a></li>
+            <li><a href="/services" className="hover:text-white transition">Services</a></li>
+            <li><a href="/contact" className="hover:text-white transition">Contact</a></li>
           </ul>
         </div>
 
@@ -31,10 +31,10 @@ const Footer = () => {
             <a href="mailto:contact@igdtuw.ac.in" className="text-gray-400 hover:text-white transition">
               <FaEnvelope size={20} />
             </a>
-            <a href="https://www.instagram.com/igdtuw/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">
+            <a href="https://www.instagram.com/igdtuw.official/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">
               <FaInstagram size={20} />
             </a>
-            <a href="https://www.linkedin.com/school/igdtuw/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">
+            <a href="https://www.linkedin.com/school/indira-gandhi-delhi-technical-university-for-women-new-delhi/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition">
               <FaLinkedin size={20} />
             </a>
           </div>

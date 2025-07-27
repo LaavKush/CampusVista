@@ -1,0 +1,107 @@
+[
+  {
+    "name": "Steamed Momos",
+    "price": 40,
+    "image": "/images/steamed-momos.jpg",
+    "description": "Soft dumplings filled with flavorful veggie stuffing, steamed to perfection.",
+    "category": "Momos"
+  },
+  {
+    "name": "Fried Momos",
+    "price": 50,
+    "image": "/images/fried-momos.jpg",
+    "description": "Crispy fried momos served with spicy dip.",
+    "category": "Momos"
+  },
+  {
+    "name": "Kurkure Momos",
+    "price": 60,
+    "image": "/images/kurkure-momos.jpg",
+    "description": "Momos coated with crispy kurkure and deep fried for extra crunch.",
+    "category": "Momos"
+  },
+  {
+    "name": "Cheesy Maggi",
+    "price": 45,
+    "image": "/images/cheesy-maggi.jpg",
+    "description": "Classic Maggi loaded with melted cheese and spices.",
+    "category": "Maggi"
+  },
+  {
+    "name": "Plain Maggi",
+    "price": 30,
+    "image": "/images/plain-maggi.jpg",
+    "description": "Simple and classic Maggi with minimal spices.",
+    "category": "Maggi"
+  },
+  {
+    "name": "Masala Maggi",
+    "price": 35,
+    "image": "/images/masala-maggi.jpg",
+    "description": "Spicy and flavorful Maggi made with Indian masalas.",
+    "category": "Maggi"
+  },
+  {
+    "name": "White Sauce Pasta",
+    "price": 60,
+    "image": "/images/white-pasta.jpg",
+    "description": "Creamy white sauce pasta with veggies and herbs.",
+    "category": "Pasta"
+  },
+  {
+    "name": "Red Sauce Pasta",
+    "price": 60,
+    "image": "/images/red-pasta.jpg",
+    "description": "Tangy tomato-based pasta garnished with herbs and cheese.",
+    "category": "Pasta"
+  },
+  {
+    "name": "Spring Rolls",
+    "price": 40,
+    "image": "/images/spring-rolls.jpg",
+    "description": "Crispy rolls filled with vegetables and served hot.",
+    "category": "Snacks"
+  },
+  {
+    "name": "Paneer Kulcha",
+    "price": 50,
+    "image": "/images/paneer-kulcha.jpg",
+    "description": "Stuffed kulcha bread filled with spicy paneer mix.",
+    "category": "Indian Breads"
+  },
+  {
+    "name": "Burger",
+    "price": 50,
+    "image": "/images/burger.jpg",
+    "description": "Classic burger with patty, lettuce, and sauces in a bun.",
+    "category": "Snacks"
+  },
+  {
+    "name": "Grilled Sandwich",
+    "price": 45,
+    "image": "/images/grilled-sandwich.jpg",
+    "description": "Crispy grilled sandwich loaded with veggies and cheese.",
+    "category": "Snacks"
+  },
+  {
+    "name": "Non-Grilled Sandwich",
+    "price": 40,
+    "image": "/images/nongrilled-sandwich.jpg",
+    "description": "Soft sandwich filled with fresh veggies and sauces.",
+    "category": "Snacks"
+  },
+  {
+    "name": "Patties",
+    "price": 20,
+    "image": "/images/patties.jpg",
+    "description": "Baked puff filled with spiced potato filling.",
+    "category": "Bakery"
+  },
+  {
+    "name": "Tea",
+    "price": 15,
+    "image": "/images/tea.jpg",
+    "description": "Hot and aromatic Indian chai, perfect for a quick refresh.",
+    "category": "Beverages"
+  }
+]
