@@ -12,6 +12,7 @@ import ViewMenu from './components/services/ViewMenu';
 import CartPage from './components/services/CartPage';
 import ThankYou from './pages/ThankYou';
 import MyOrders from './pages/MyOrders'; 
+import Map from './pages/Map'; 
 
 import { getRedirectResult, onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
@@ -88,6 +89,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/thank-you" element={<ThankYou user={user} />} />
           <Route path="/my-orders" element={<MyOrders />} /> 
+          <Route path="/campus-tour" element={<Map />} /> 
         </Routes>
       </Router>
     </CartProvider>
