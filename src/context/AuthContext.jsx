@@ -1,18 +1,100 @@
+// // src/context/AuthContext.jsx
+// import React, { createContext, useContext, useEffect, useState } from "react";
+// // AuthContext.jsx
+// import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+// import { initializeApp } from "firebase/app";
+
+// import { auth } from "../firebase";
+
+// const AuthContext = createContext();
+
+// export const AuthProvider = ({ children }) => {
+//   const [user, setUser] = useState(null);
+//   const [loading, setLoading] = useState(true);
+
+//   // Helper: shallow compare relevant user fields to avoid unnecessary updates
+//   const isSameUser = (userA, userB) => {
+//     if (!userA && !userB) return true;
+//     if (!userA || !userB) return false;
+//     return (
+//       userA.uid === userB.uid &&
+//       userA.email === userB.email &&
+//       userA.displayName === userB.displayName &&
+//       userA.photoURL === userB.photoURL
+//     );
+//   };
+
+// // Google Sign-In method
+// const googleSignIn = async () => {
+//   const provider = new GoogleAuthProvider();
+//   try {
+//     const result = await signInWithPopup(auth, provider);
+//     const user = result.user;
+
+//     // Check if email ends with @igdtuw.ac.in
+//     if (!user.email.endsWith("@igdtuw.ac.in")) {
+//       alert("Only IGDTUW email addresses are allowed.");
+//       await signOut(auth);
+//       return;
+//     }
+
+//     console.log("User signed in:", user);
+//   } catch (err) {
+//     console.error("Google Sign-In Error:", err.message);
+//   }
+// };
+
+
+//   // Logout method
+//   const logout = async () => {
+//     try {
+//       await signOut(auth);
+//     } catch (err) {
+//       console.error("Logout error:", err.message);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+//       console.log("Auth state changed. Current user: ", currentUser);
+
+//       // Only update user state if data changed
+//       setUser((prevUser) => {
+//         if (isSameUser(prevUser, currentUser)) {
+//           return prevUser; // No change, avoid re-render
+//         }
+//         return currentUser; // Updated user info
+//       });
+
+//       setLoading(false);
+//     });
+
+//     return () => unsubscribe();
+//   }, []);
+
+//   return (
+//     <AuthContext.Provider value={{ user, googleSignIn, logout }}>
+//       {!loading && children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+// export const useAuth = () => useContext(AuthContext);
+
+
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-// AuthContext.jsx
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword,GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { initializeApp } from "firebase/app";
-
+import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../firebase";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null); // <-- New state for role
   const [loading, setLoading] = useState(true);
 
-  // Helper: shallow compare relevant user fields to avoid unnecessary updates
+  // Helper: compare user objects to avoid unnecessary updates
   const isSameUser = (userA, userB) => {
     if (!userA && !userB) return true;
     if (!userA || !userB) return false;
@@ -24,47 +106,75 @@ export const AuthProvider = ({ children }) => {
     );
   };
 
-// Google Sign-In method
-const googleSignIn = async () => {
-  const provider = new GoogleAuthProvider();
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
+  // 🌐 Google Sign-In method
+  const googleSignIn = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const email = user.email.toLowerCase();
 
-    // Check if email ends with @igdtuw.ac.in
-    if (!user.email.endsWith("@igdtuw.ac.in")) {
-      alert("Only IGDTUW email addresses are allowed.");
-      await signOut(auth);
-      return;
+      // Role-based logic
+      if (email.endsWith("@igdtuw.ac.in")) {
+        setRole("student");
+        console.log("Student user detected:", email);
+        window.location.href = "/student-dashboard"; // 🔗 redirect student
+      } 
+      else if (
+        email === "tiwarijishop@gmail.com" ||
+        email === "nescafe.igdtuw@gmail.com"
+      ) {
+        setRole("admin");
+        console.log("Admin user detected:", email);
+        window.location.href = "/admin-dashboard"; // 🔗 redirect admin
+      } 
+      else {
+        alert("Access denied. Please use a valid IGDTUW or admin email.");
+        await signOut(auth);
+      }
+
+      console.log("User signed in:", user);
+    } catch (err) {
+      console.error("Google Sign-In Error:", err.message);
     }
+  };
 
-    console.log("User signed in:", user);
-  } catch (err) {
-    console.error("Google Sign-In Error:", err.message);
-  }
-};
-
-
-  // Logout method
+  // 🚪 Logout method
   const logout = async () => {
     try {
       await signOut(auth);
+      setRole(null);
     } catch (err) {
       console.error("Logout error:", err.message);
     }
   };
 
+  // 👀 Track user state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("Auth state changed. Current user: ", currentUser);
+      console.log("Auth state changed. Current user:", currentUser);
 
-      // Only update user state if data changed
       setUser((prevUser) => {
-        if (isSameUser(prevUser, currentUser)) {
-          return prevUser; // No change, avoid re-render
-        }
-        return currentUser; // Updated user info
+        if (isSameUser(prevUser, currentUser)) return prevUser;
+        return currentUser;
       });
+
+      if (currentUser) {
+        const email = currentUser.email.toLowerCase();
+
+        if (email.endsWith("@igdtuw.ac.in")) {
+          setRole("student");
+        } else if (
+          email === "tiwarijishop@gmail.com" ||
+          email === "nescafe.igdtuw@gmail.com"
+        ) {
+          setRole("admin");
+        } else {
+          setRole("unknown");
+        }
+      } else {
+        setRole(null);
+      }
 
       setLoading(false);
     });
@@ -73,7 +183,7 @@ const googleSignIn = async () => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, googleSignIn, logout }}>
+    <AuthContext.Provider value={{ user, role, googleSignIn, logout }}>
       {!loading && children}
     </AuthContext.Provider>
   );

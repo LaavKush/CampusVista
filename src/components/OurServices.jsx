@@ -26,7 +26,7 @@ const OurServices = () => {
             Grab delicious food and refreshing beverages across the campus.
           </p>
           <button
-            onClick={() => navigate('/dashboard', { state: { service: 'food' } })}
+            onClick={() => navigate('/student-dashboard', { state: { service: 'food' } })}
             className="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded-md transition-colors duration-300"
           >
             Order Now
@@ -41,7 +41,7 @@ const OurServices = () => {
             Quick and convenient access to photocopy services and essentials.
           </p>
           <button
-            onClick={() => navigate('/dashboard', { state: { service: 'photocopy' } })}
+            onClick={() => navigate('/student-dashboard', { state: { service: 'photocopy' } })}
             className="bg-gray-800 hover:bg-gray-700 text-white font-semibold px-6 py-2 rounded-md transition-colors duration-300"
           >
             Visit Now

@@ -8,7 +8,7 @@ const Footer = () => {
         
         {/* Left: About */}
         <div>
-          <h3 className="text-lg font-bold text-teal-400 mb-2">About IGDTUW Tour</h3>
+          <h3 className="text-lg font-bold text-teal-400 mb-2">About CampusVista</h3>
           <p className="text-gray-400 text-sm">
             Explore our beautiful campus, student life, and everything IGDTUW has to offer!
           </p>
@@ -44,7 +44,7 @@ const Footer = () => {
 
       {/* Bottom copyright */}
       <div className="mt-10 text-center text-sm text-gray-500 border-t border-gray-700 pt-4">
-        © {new Date().getFullYear()} IGDTUW Campus Tour. All rights reserved.
+        © {new Date().getFullYear()} IGDTUW CampusVista. All rights reserved.
       </div>
     </footer>
   );

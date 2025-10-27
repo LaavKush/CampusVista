@@ -43,9 +43,7 @@ const PhotocopyShopSection = () => {
     setFiles(prev => [...prev, ...validFiles]);
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  const handleDragOver = (e) => e.preventDefault();
 
   const handleRemoveFile = (index) => {
     const updated = files.filter((_, i) => i !== index);
@@ -96,80 +94,82 @@ const PhotocopyShopSection = () => {
   };
 
   return (
-    <div className="bg-white shadow-xl rounded-2xl max-w-3xl mx-auto p-8">
-      <h2 className="text-3xl font-bold text-center text-teal-700 mb-2">📄 Print & Photocopy Order</h2>
-      <p className="text-center text-gray-600 mb-8">
-        Upload your documents below. We accept PNG, JPG, PDF, and DOCX files.
-      </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-50 to-white p-6">
+      <div className="bg-white shadow-2xl rounded-2xl w-full max-w-3xl p-10 text-center">
+        <h2 className="text-3xl font-bold text-teal-700 mb-2">📄 Print & Photocopy Order</h2>
+        <p className="text-gray-600 mb-8">
+          Upload your documents below. We accept PNG, JPG, PDF, and DOCX files.
+        </p>
 
-      {/* Drop Zone */}
-      <div
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-        className="w-[90%] max-w-3xl mx-auto border-2 border-dashed border-teal-400 rounded-xl p-10 mb-6 bg-teal-50 hover:bg-teal-100 transition text-center cursor-pointer"
-      >
-        <CloudUpload className="mx-auto text-teal-600 mb-3" size={40} />
-        <p className="text-gray-600 font-medium">Drag & drop files here</p>
-        <p className="text-gray-500 text-sm mb-4">or click below to browse</p>
-
-        <div className="flex justify-center items-center w-full">
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept=".png, .jpg, .jpeg, .pdf, .docx"
-            onChange={handleFileChange}
-            className="block text-sm text-gray-700
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-md file:border-0
-              file:text-sm file:font-semibold
-              file:bg-teal-600 file:text-white
-              hover:file:bg-teal-700 transition"
-          />
-        </div>
-      </div>
-
-      {/* File List */}
-      {files.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-700 mb-3">Selected Files:</h3>
-          <ul className="space-y-2">
-            {files.map((file, index) => (
-              <li key={index} className="bg-gray-100 flex items-center justify-between px-4 py-2 rounded-md">
-                <div className="flex items-center gap-2 text-gray-800">
-                  <FileText size={18} className="text-teal-600" />
-                  <span className="truncate max-w-xs">{file.name}</span>
-                </div>
-                <button
-                  onClick={() => handleRemoveFile(index)}
-                  className="text-red-500 hover:text-red-700"
-                  title="Remove"
-                >
-                  <Trash2 size={18} />
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {/* Submit Button */}
-      <div className="text-center">
-        <button
-          onClick={handleSubmit}
-          className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-md font-medium transition"
+        {/* Drop Zone */}
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          className="w-full border-2 border-dashed border-teal-400 rounded-xl p-10 mb-6 bg-teal-50 hover:bg-teal-100 transition text-center cursor-pointer"
         >
-          Submit for Printing (₹{files.length * PRICE_PER_FILE})
-        </button>
+          <CloudUpload className="mx-auto text-teal-600 mb-3" size={40} />
+          <p className="text-gray-600 font-medium">Drag & drop files here</p>
+          <p className="text-gray-500 text-sm mb-4">or click below to browse</p>
 
-        {/* View Previous Orders */}
-        <div className="mt-4">
-          <Link
-            to="/my-orders?source=printOrders"
-            className="text-teal-600 hover:underline text-sm"
+          <div className="flex justify-center items-center w-full">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              accept=".png, .jpg, .jpeg, .pdf, .docx"
+              onChange={handleFileChange}
+              className="block text-sm text-gray-700
+                file:mr-4 file:py-2 file:px-4
+                file:rounded-md file:border-0
+                file:text-sm file:font-semibold
+                file:bg-teal-600 file:text-white
+                hover:file:bg-teal-700 transition"
+            />
+          </div>
+        </div>
+
+        {/* File List */}
+        {files.length > 0 && (
+          <div className="mb-8 text-left">
+            <h3 className="text-lg font-semibold text-gray-700 mb-3">Selected Files:</h3>
+            <ul className="space-y-2">
+              {files.map((file, index) => (
+                <li key={index} className="bg-gray-100 flex items-center justify-between px-4 py-2 rounded-md">
+                  <div className="flex items-center gap-2 text-gray-800">
+                    <FileText size={18} className="text-teal-600" />
+                    <span className="truncate max-w-xs">{file.name}</span>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveFile(index)}
+                    className="text-red-500 hover:text-red-700"
+                    title="Remove"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <div className="text-center">
+          <button
+            onClick={handleSubmit}
+            className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-md font-medium transition"
           >
-            View Previous Print Orders
-          </Link>
+            Submit for Printing (₹{files.length * PRICE_PER_FILE})
+          </button>
+
+          {/* View Previous Orders */}
+          <div className="mt-4">
+            <Link
+              to="/my-orders?source=printOrders"
+              className="text-teal-600 hover:underline text-sm"
+            >
+              View Previous Print Orders
+            </Link>
+          </div>
         </div>
       </div>
     </div>
