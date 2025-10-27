@@ -55,7 +55,7 @@ const HeroSection = () => {
       {/* Content */}
       <div className="max-w-4xl mx-auto z-10">
         <h1 className="text-4xl md:text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-teal-100 via-teal-150 to-teal-100 drop-shadow-lg mb-6">
-                Hello, {user.displayName || user.email || "Guest"}!
+                 Hello, {user?.displayName || user?.email || "Guest"}!
               </h1>
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6 text-white tracking-wide drop-shadow-[0_4px_20px_rgba(0,0,0,0.45)]">
           <span className="block">Welcome to</span>

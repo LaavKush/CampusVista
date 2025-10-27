@@ -49,7 +49,7 @@ const Dashboard = () => {
         {user ? (
           <>
             <h1 className="text-4xl md:text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-teal-900 via-teal-600 to-teal-900 drop-shadow-lg mb-6">
-              Welcome, {user.displayName || user.email || "Guest"}!
+               Welcome, {user?.displayName || user?.email || "Guest"}!
             </h1>
 
             {/* ✅ Show shop image below the welcome text */}
