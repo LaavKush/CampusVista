@@ -121,18 +121,19 @@ const HeroSection = () => {
     console.log("Opening Signup Modal");
     setSignupOpen(true);
   };
+
   const closeSignupModal = () => {
     console.log("Closing Signup Modal");
     setSignupOpen(false);
   };
 
-const handleExploreClick = () => {
+  const handleExploreClick = () => {
   console.log("Explore Now button clicked");
+
   if (user) {
     console.log("User is logged in:", user);
-    // Navigate directly to campus tour
-    console.log("Navigating to /campus-tour because user is logged in");
-    navigate("/campus-tour");
+    console.log("Navigating to Campus Explore website...");
+    window.location.href = "https://campus-explore.vercel.app/"; 
   } else {
     console.log("User is null -> opening signup modal");
     openSignupModal();
@@ -181,7 +182,7 @@ const handleExploreClick = () => {
         onSuccess={() => {
           console.log("Signup successful -> navigating to campus-tour page");
           closeSignupModal();
-          navigate("/campus-tour");
+          navigate("https://campus-explore.vercel.app/");
         }}
       />
     </section>
@@ -189,4 +190,3 @@ const handleExploreClick = () => {
 };
 
 export default HeroSection;
-
