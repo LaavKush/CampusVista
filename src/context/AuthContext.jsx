@@ -99,7 +99,7 @@ export const AuthProvider = ({ children }) => {
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Helper to safely compare user objects
+  // ✅ Helper: safely compare users to prevent redundant re-renders
   const isSameUser = (userA, userB) => {
     if (!userA && !userB) return true;
     if (!userA || !userB) return false;
@@ -117,28 +117,28 @@ export const AuthProvider = ({ children }) => {
     try {
       const result = await signInWithPopup(auth, provider);
       const signedInUser = result.user;
-      const email = signedInUser.email?.toLowerCase() || "";
+      const email = signedInUser?.email?.toLowerCase() || "";
 
-      // ✅ Role-based redirection logic
+      console.log("✅ Signed in user:", signedInUser);
+
+      // ✅ Role-based logic
       if (email.endsWith("@igdtuw.ac.in")) {
         setRole("student");
-        console.log("🎓 Student user detected:", email);
+        console.log("🎓 Student detected:", email);
         window.location.href = "/student-dashboard";
       } else if (
         email === "tiwarijishop@gmail.com" ||
         email === "nescafe.igdtuw@gmail.com"
       ) {
         setRole("admin");
-        console.log("🛠 Admin user detected:", email);
+        console.log("🛠 Admin detected:", email);
         window.location.href = "/admin-dashboard";
       } else {
         alert("Access denied. Please use a valid IGDTUW or admin email.");
         await signOut(auth);
       }
-
-      console.log("✅ User signed in:", signedInUser);
     } catch (err) {
-      console.error("❌ Google Sign-In Error:", err.message);
+      console.error("❌ Google Sign-In Error:", err);
     }
   };
 
@@ -149,23 +149,23 @@ export const AuthProvider = ({ children }) => {
       setUser(null);
       setRole(null);
       console.log("✅ User logged out successfully");
+      // Optional: redirect to homepage
+      window.location.href = "/";
     } catch (err) {
-      console.error("❌ Logout error:", err.message);
+      console.error("❌ Logout error:", err);
     }
   };
 
-  // 👀 Track user state
+  // 👀 Track user state with Firebase
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      console.log("🔄 Auth state changed. Current user:", currentUser);
+      console.log("🔄 Auth state changed →", currentUser);
 
-      // Safely set user
       setUser((prevUser) => {
         if (isSameUser(prevUser, currentUser)) return prevUser;
         return currentUser;
       });
 
-      // Determine user role
       if (currentUser?.email) {
         const email = currentUser.email.toLowerCase();
         if (email.endsWith("@igdtuw.ac.in")) {
@@ -190,11 +190,10 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ user, role, googleSignIn, logout }}>
-      {/* Prevent rendering children until Firebase finishes loading */}
       {!loading && children}
     </AuthContext.Provider>
   );
 };
 
-// ✅ Custom Hook
+// ✅ Custom hook to use Auth
 export const useAuth = () => useContext(AuthContext);
