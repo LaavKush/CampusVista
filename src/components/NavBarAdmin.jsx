@@ -54,11 +54,12 @@ const AdminNavbar = ({ visible }) => {
 
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-transform duration-300 ${
-        visible ? 'translate-y-0' : '-translate-y-full'
-      } bg-gradient-to-r from-[#0f172a] via-[#0f766e] to-[#134e4a] shadow-lg`}
-    >
+   <nav
+  className={`w-full z-50 transition-all duration-300 ${
+    isFixed ? "fixed top-0 bg-white shadow-md" : visible ? "sticky top-0 bg-white shadow-md" : "absolute"
+  }`}
+>
+
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
 
@@ -78,6 +79,7 @@ const AdminNavbar = ({ visible }) => {
           {[
             { label: 'Home', to: '/admin-dashboard' },
             { label: 'Orders', to: '/orders-received' },
+            { label: 'Stock', to: '/stock' },
             { label: 'Contact us', to: '/contact' },
           ].map((item) => (
             <li key={item.label}>

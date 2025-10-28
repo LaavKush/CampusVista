@@ -1,7 +1,7 @@
 // src/components/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import AdminNavbar from "./NavBarAdmin";
+import AdminNavbar from "./Navbar";
 import { useAuth } from "../context/AuthContext";
 import SignupModal from "./SignupModal";
 

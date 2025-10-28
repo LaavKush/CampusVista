@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import AdminNavbar from "../components/NavBarAdmin";
+// import AdminNavbar from "../components/NavBarAdmin";
 import Navbar from "../components/Navbar";
 
 const Contact = () => {
@@ -38,7 +38,8 @@ const Contact = () => {
   return (
     <>
       {/* ✅ Render correct navbar */}
-      {isAdmin ? <AdminNavbar /> : <Navbar visible={true} />}
+      {/* {isAdmin ? <AdminNavbar /> : <Navbar visible={true} />} */}
+      <Navbar/>
 
       {/* ✅ Contact Section */}
       <section
