@@ -1,7 +1,14 @@
-// import React, { useEffect } from "react";
+// ✅ src/pages/ThankYou.jsx
+
+// import React, { useEffect, useState } from "react";
 // import { Link, useLocation, useNavigate } from "react-router-dom";
-// import { CheckCircle } from "lucide-react";
+// import { CheckCircle, XCircle } from "lucide-react";
 // import emailjs from "@emailjs/browser";
+// import { collection, query, where, getDocs, updateDoc } from "firebase/firestore";
+// import { db } from "../firebase"; // ✅ import Firestore instance
+// import { XCircle } from "lucide-react"; // or whichever icon lib you use
+
+
 
 // const statusColors = {
 //   pending: "bg-yellow-100 text-yellow-800",
@@ -15,6 +22,7 @@
 //   const location = useLocation();
 //   const order = location.state?.order || {};
 //   const navigate = useNavigate();
+//   const [isCancelling, setIsCancelling] = useState(false);
 
 //   const source = order.source || "orders"; // orders or printOrders
 //   const isPrintOrder = source === "printOrders";
@@ -28,7 +36,9 @@
 //   });
 
 //   const statusKey = order?.status?.toLowerCase() || "pending";
+  
 
+//   // ✅ Send confirmation email after placing order
 //   useEffect(() => {
 //     if (!order || !order.email) {
 //       console.warn("⚠️ Missing order or email:", order);
@@ -43,32 +53,88 @@
 //       status: order.status || "Pending",
 //       status_class: statusKey,
 //       amount:
-//         typeof order.amount === "number"
-//           ? order.amount.toFixed(2)
-//           : "0.00",
+//         typeof order.amount === "number" ? order.amount.toFixed(2) : "0.00",
 //     };
 
-//     console.log("📤 Prepared emailParams:");
-//     console.table(emailParams);
-
+//     console.log("📤 Sending order confirmation email...");
 //     emailjs
 //       .send(
-//         "service_vpomnph",         // your EmailJS service ID
-//         "template_udv3zrh",        // your EmailJS template ID
+//         "service_vpomnph",
+//         "template_udv3zrh",
 //         emailParams,
-//         "uFMWqshSnK5ZXMCmN"        // your EmailJS public key
+//         "uFMWqshSnK5ZXMCmN"
 //       )
 //       .then(() => console.log("✅ Order confirmation email sent"))
 //       .catch((error) => console.error("❌ Email sending failed:", error));
 //   }, [order, formattedDate, statusKey]);
 
-//   if (!order?.id) {
-//     return (
-//       <p className="text-center py-8 text-gray-600">
-//         No order details available.
-//       </p>
+//   // 🗑️ Handle order cancellation
+//   const handleCancelOrder = async () => {
+//   if (!order.id || !order.email) return alert("Invalid order data.");
+
+//   const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+//   if (!confirmCancel) return;
+
+//   try {
+//     setIsCancelling(true);
+
+//     // 🔍 Find the document where the 'id' field matches the order.id
+//     const q = query(collection(db, source), where("id", "==", order.id));
+//     const querySnapshot = await getDocs(q);
+
+//     if (querySnapshot.empty) {
+//       console.error("⚠️ No document found for this order ID:", order.id);
+//       alert("Order not found in database.");
+//       return;
+//     }
+
+//     // ✅ Update the first matching document
+//     const docRef = querySnapshot.docs[0].ref;
+//     await updateDoc(docRef, { status: "cancelled" });
+//     console.log("🚫 Order marked as cancelled in Firestore.");
+
+//     // 📩 Send cancellation email
+//     const cancelParams = {
+//       email: order.email,
+//       customer_name: order.name || order.customer_name || "Customer",
+//       order_id: order.id,
+//       order_date: formattedDate,
+//       amount:
+//         typeof order.amount === "number"
+//           ? order.amount.toFixed(2)
+//           : "0.00",
+//     };
+
+//     await emailjs.send(
+//       "service_vpomnph",
+//       "template_vcvwcfv",
+//       cancelParams,
+//       "uFMWqshSnK5ZXMCmN"
 //     );
+
+//     alert("Order cancelled successfully! A confirmation email has been sent.");
+//     navigate(`/my-orders?source=${isPrintOrder ? "printOrders" : "orders"}`);
+//   } catch (error) {
+//     console.error("❌ Error cancelling order:", error);
+//     alert("Failed to cancel order. Try again later.");
+//   } finally {
+//     setIsCancelling(false);
 //   }
+// };
+// const CancelButton = ({ handleCancelOrder, isCancelling }) => {
+//   const [canCancel, setCanCancel] = useState(true);
+//   const [countdown, setCountdown] = useState(30);
+
+//   useEffect(() => {
+//     // ⏱ Countdown timer (30 seconds)
+//     if (countdown > 0 && canCancel) {
+//       const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+//       return () => clearTimeout(timer);
+//     }
+
+//     // ❌ After 30 seconds
+//     if (countdown === 0) setCanCancel(false);
+//   }, [countdown, canCancel]);
 
 //   return (
 //     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6 py-12">
@@ -97,12 +163,12 @@
 //             </span>
 //           </p>
 //           <p className="mt-2 text-2xl font-bold">
-//             Amount: ₹{typeof order.amount === "number"
+//             Amount: ₹
+//             {typeof order.amount === "number"
 //               ? order.amount.toFixed(2)
 //               : String(order.amount) || "0.00"}
 //           </p>
 
-//           {/* ✅ Show files if it's a print order */}
 //           {isPrintOrder && Array.isArray(order.fileNames) && (
 //             <div className="mt-4">
 //               <p className="font-semibold text-gray-700 mb-1">Files:</p>
@@ -123,14 +189,26 @@
 //             Back to Home
 //           </Link>
 
-//           {/* ✅ Conditional redirect to correct order list */}
-//          <Link
-//   to={`/my-orders?source=${isPrintOrder ? 'printOrders' : 'orders'}`}
-//   className="text-teal-600 hover:underline text-sm"
-// >
-//   View My {isPrintOrder ? "Print" : "Canteen"} Orders
-// </Link>
+//           <Link
+//             to={`/my-orders?source=${isPrintOrder ? "printOrders" : "orders"}`}
+//             className="text-teal-600 hover:underline text-sm"
+//           >
+//             View My {isPrintOrder ? "Print" : "Canteen"} Orders
+//           </Link>
 
+//           {/* ❌ Cancel Order Button */}
+//           <button
+//             onClick={handleCancelOrder}
+//             disabled={isCancelling}
+//             className={`flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition ${
+//               isCancelling
+//                 ? "bg-gray-400 cursor-not-allowed"
+//                 : "bg-red-600 hover:bg-red-700 text-white"
+//             }`}
+//           >
+//             <XCircle className="w-5 h-5" />
+//             {isCancelling ? "Cancelling..." : "Cancel Order"}
+//           </button>
 //         </div>
 //       </div>
 //     </div>
@@ -139,14 +217,12 @@
 
 // export default ThankYou;
 
-// ✅ src/pages/ThankYou.jsx
-
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle, XCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { collection, query, where, getDocs, updateDoc } from "firebase/firestore";
-import { db } from "../firebase"; // ✅ import Firestore instance
+import { db } from "../firebase"; // ✅ Firestore instance
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -160,11 +236,12 @@ const ThankYou = () => {
   const location = useLocation();
   const order = location.state?.order || {};
   const navigate = useNavigate();
+
   const [isCancelling, setIsCancelling] = useState(false);
+  const [canCancel, setCanCancel] = useState(true);
+  const [countdown, setCountdown] = useState(30);
 
   const source = order.source || "orders"; // orders or printOrders
-  const isPrintOrder = source === "printOrders";
-
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString("en-IN", {
     weekday: "long",
@@ -172,15 +249,20 @@ const ThankYou = () => {
     month: "long",
     day: "numeric",
   });
-
   const statusKey = order?.status?.toLowerCase() || "pending";
+
+  // ✅ Auto-disable cancel after 30 seconds
+  useEffect(() => {
+    if (countdown > 0 && canCancel) {
+      const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+    if (countdown === 0) setCanCancel(false);
+  }, [countdown, canCancel]);
 
   // ✅ Send confirmation email after placing order
   useEffect(() => {
-    if (!order || !order.email) {
-      console.warn("⚠️ Missing order or email:", order);
-      return;
-    }
+    if (!order || !order.email) return;
 
     const emailParams = {
       email: order.email || "guest@example.com",
@@ -193,71 +275,60 @@ const ThankYou = () => {
         typeof order.amount === "number" ? order.amount.toFixed(2) : "0.00",
     };
 
-    console.log("📤 Sending order confirmation email...");
     emailjs
-      .send(
-        "service_vpomnph",
-        "template_udv3zrh",
-        emailParams,
-        "uFMWqshSnK5ZXMCmN"
-      )
+      .send("service_vpomnph", "template_udv3zrh", emailParams, "uFMWqshSnK5ZXMCmN")
       .then(() => console.log("✅ Order confirmation email sent"))
       .catch((error) => console.error("❌ Email sending failed:", error));
   }, [order, formattedDate, statusKey]);
 
   // 🗑️ Handle order cancellation
   const handleCancelOrder = async () => {
-  if (!order.id || !order.email) return alert("Invalid order data.");
+    if (!order.id || !order.email) return alert("Invalid order data.");
 
-  const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
-  if (!confirmCancel) return;
+    const confirmCancel = window.confirm("Are you sure you want to cancel this order?");
+    if (!confirmCancel) return;
 
-  try {
-    setIsCancelling(true);
+    try {
+      setIsCancelling(true);
 
-    // 🔍 Find the document where the 'id' field matches the order.id
-    const q = query(collection(db, source), where("id", "==", order.id));
-    const querySnapshot = await getDocs(q);
+      const q = query(collection(db, source), where("id", "==", order.id));
+      const querySnapshot = await getDocs(q);
 
-    if (querySnapshot.empty) {
-      console.error("⚠️ No document found for this order ID:", order.id);
-      alert("Order not found in database.");
-      return;
+      if (querySnapshot.empty) {
+        alert("Order not found in database.");
+        return;
+      }
+
+      const docRef = querySnapshot.docs[0].ref;
+      await updateDoc(docRef, { status: "cancelled" });
+      console.log("🚫 Order marked as cancelled in Firestore.");
+
+      // 📩 Send cancellation email
+      const cancelParams = {
+        email: order.email,
+        customer_name: order.name || order.customer_name || "Customer",
+        order_id: order.id,
+        order_date: formattedDate,
+        amount:
+          typeof order.amount === "number" ? order.amount.toFixed(2) : "0.00",
+      };
+
+      await emailjs.send(
+        "service_vpomnph",
+        "template_vcvwcfv",
+        cancelParams,
+        "uFMWqshSnK5ZXMCmN"
+      );
+
+      alert("Order cancelled successfully! A confirmation email has been sent.");
+      navigate(`/my-orders?source=${source}`);
+    } catch (error) {
+      console.error("❌ Error cancelling order:", error);
+      alert("Failed to cancel order. Try again later.");
+    } finally {
+      setIsCancelling(false);
     }
-
-    // ✅ Update the first matching document
-    const docRef = querySnapshot.docs[0].ref;
-    await updateDoc(docRef, { status: "cancelled" });
-    console.log("🚫 Order marked as cancelled in Firestore.");
-
-    // 📩 Send cancellation email
-    const cancelParams = {
-      email: order.email,
-      customer_name: order.name || order.customer_name || "Customer",
-      order_id: order.id,
-      order_date: formattedDate,
-      amount:
-        typeof order.amount === "number"
-          ? order.amount.toFixed(2)
-          : "0.00",
-    };
-
-    await emailjs.send(
-      "service_vpomnph",
-      "template_vcvwcfv",
-      cancelParams,
-      "uFMWqshSnK5ZXMCmN"
-    );
-
-    alert("Order cancelled successfully! A confirmation email has been sent.");
-    navigate(`/my-orders?source=${isPrintOrder ? "printOrders" : "orders"}`);
-  } catch (error) {
-    console.error("❌ Error cancelling order:", error);
-    alert("Failed to cancel order. Try again later.");
-  } finally {
-    setIsCancelling(false);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-6 py-12">
@@ -270,6 +341,7 @@ const ThankYou = () => {
           Your order has been placed successfully. You’ll receive a confirmation email shortly.
         </p>
 
+        {/* Order Summary Card */}
         <div className="mb-6 text-left border rounded-lg p-4 shadow-sm bg-white">
           <h3 className="text-xl font-semibold mb-2">Order Summary</h3>
           <p><strong>Order ID:</strong> {order.id}</p>
@@ -292,7 +364,8 @@ const ThankYou = () => {
               : String(order.amount) || "0.00"}
           </p>
 
-          {isPrintOrder && Array.isArray(order.fileNames) && (
+          {/* Print Files if any */}
+          {Array.isArray(order.fileNames) && order.fileNames.length > 0 && (
             <div className="mt-4">
               <p className="font-semibold text-gray-700 mb-1">Files:</p>
               <ul className="list-disc list-inside text-sm text-gray-600">
@@ -304,6 +377,7 @@ const ThankYou = () => {
           )}
         </div>
 
+        {/* Buttons Section */}
         <div className="flex flex-col gap-3">
           <Link
             to="/"
@@ -313,25 +387,33 @@ const ThankYou = () => {
           </Link>
 
           <Link
-            to={`/my-orders?source=${isPrintOrder ? "printOrders" : "orders"}`}
+            to={`/my-orders?source=${source}`}
             className="text-teal-600 hover:underline text-sm"
           >
-            View My {isPrintOrder ? "Print" : "Canteen"} Orders
+            View My Orders
           </Link>
 
-          {/* ❌ Cancel Order Button */}
-          <button
-            onClick={handleCancelOrder}
-            disabled={isCancelling}
-            className={`flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition ${
-              isCancelling
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-red-600 hover:bg-red-700 text-white"
-            }`}
-          >
-            <XCircle className="w-5 h-5" />
-            {isCancelling ? "Cancelling..." : "Cancel Order"}
-          </button>
+          {/* Cancel Button (visible for 30s) */}
+          {canCancel ? (
+            <button
+              onClick={handleCancelOrder}
+              disabled={isCancelling}
+              className={`flex items-center justify-center gap-2 py-3 rounded-lg font-medium transition ${
+                isCancelling
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-red-600 hover:bg-red-700 text-white"
+              }`}
+            >
+              <XCircle className="w-5 h-5" />
+              {isCancelling
+                ? "Cancelling..."
+                : `Cancel Order (${countdown}s left)`}
+            </button>
+          ) : (
+            <p className="text-gray-500 text-sm italic mt-2">
+              ⏱️ You won’t be able to cancel the order after 30 seconds.
+            </p>
+          )}
         </div>
       </div>
     </div>

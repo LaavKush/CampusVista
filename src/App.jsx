@@ -158,6 +158,7 @@ import { AuthProvider } from "./context/AuthContext";
 const adminShops = {
   "tiwarijishop@gmail.com": "tiwariji",
   "nescafe.igdtuw@gmail.com": "nescafe",
+  "tuckshop.igdtuw@gmail.com":"tuckshop",
 };
 
 function App() {

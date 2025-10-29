@@ -8,6 +8,7 @@ import SignupModal from "./SignupModal";
 // ✅ Import images
 import nescafeImg from "../assets/nescafe.png";
 import tiwariImg from "../assets/tiwari.png";
+import tuckImg from "../assets/tuck.png";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -35,6 +36,7 @@ const Dashboard = () => {
     if (!email) return null;
     if (email === "nescafe.igdtuw@gmail.com") return nescafeImg;
     if (email === "tiwarijishop@gmail.com") return tiwariImg;
+    if (email === "tuckshop.igdtuw@gmail.com") return tuckImg;
     return null;
   };
 

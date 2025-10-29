@@ -308,7 +308,8 @@ const Navbar = ({ visible }) => {
   // ✅ Admin Emails
   const adminEmails = {
     "nescafe.igdtuw@gmail.com": "nescafe",
-    "tiwarijishop@gmail.com": "tiwariji"
+    "tiwarijishop@gmail.com": "tiwariji",
+    "tuckshop.igdtuw@gmail.com": "tuckshop"
   };
 
   // ✅ Identify if user is admin
@@ -350,18 +351,34 @@ const Navbar = ({ visible }) => {
   console.log("✅ Navbar rendered!", user?.email, "→ shop:", shopKey);
 
   // ✅ Dynamic Navbar Links
+  // const navLinks = isAdmin
+  //   ? [
+  //       { label: "Home", to: "/admin-dashboard" },
+  //       { label: "Orders", to: "/orders-received" },
+  //       { label: "Stock", to: `/stock/${shopKey}` },
+  //       { label: "Contact us", to: "/contact" },
+  //     ]
+  //   : [
+  //       { label: "Home", to: "/student-dashboard" },
+  //       { label: "Services", to: "/services" },
+  //       { label: "Contact us", to: "/contact" },
+  //     ];
+
   const navLinks = isAdmin
-    ? [
-        { label: "Home", to: "/admin-dashboard" },
-        { label: "Orders", to: "/orders-received" },
-        { label: "Stock", to: `/stock/${shopKey}` },
-        { label: "Contact us", to: "/contact" },
-      ]
-    : [
-        { label: "Home", to: "/student-dashboard" },
-        { label: "Services", to: "/services" },
-        { label: "Contact us", to: "/contact" },
-      ];
+  ? [
+      { label: "Home", to: "/admin-dashboard" },
+      { label: "Orders", to: "/orders-received" },
+      // ❌ Hide Stock for Tuck Shop only
+      ...(shopKey !== "tuckshop"
+        ? [{ label: "Stock", to: `/stock/${shopKey}` }]
+        : []),
+      { label: "Contact us", to: "/contact" },
+    ]
+  : [
+      { label: "Home", to: "/student-dashboard" },
+      { label: "Services", to: "/services" },
+      { label: "Contact us", to: "/contact" },
+    ];
 
   return (
     <nav

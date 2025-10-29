@@ -128,7 +128,8 @@ export const AuthProvider = ({ children }) => {
         window.location.href = "/student-dashboard";
       } else if (
         email === "tiwarijishop@gmail.com" ||
-        email === "nescafe.igdtuw@gmail.com"
+        email === "nescafe.igdtuw@gmail.com"||
+        email==="tuckshop.igdtuw@gmail.com"
       ) {
         setRole("admin");
         console.log("🛠 Admin detected:", email);
