@@ -222,7 +222,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle, XCircle } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { collection, query, where, getDocs, updateDoc } from "firebase/firestore";
-import { db } from "../firebase"; // ✅ Firestore instance
+import { db } from "../firebase";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -241,7 +241,7 @@ const ThankYou = () => {
   const [canCancel, setCanCancel] = useState(true);
   const [countdown, setCountdown] = useState(30);
 
-  const source = order.source || "orders"; // orders or printOrders
+  const source = order.source || "orders";
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString("en-IN", {
     weekday: "long",
@@ -249,9 +249,15 @@ const ThankYou = () => {
     month: "long",
     day: "numeric",
   });
+
+  // Generate short readable order number
+  const orderNumber =
+    order?.number ||
+    (order?.id ? order.id.slice(-3) : Math.floor(Math.random() * 100));
+
   const statusKey = order?.status?.toLowerCase() || "pending";
 
-  // ✅ Auto-disable cancel after 30 seconds
+  // Disable cancel after 30 seconds
   useEffect(() => {
     if (countdown > 0 && canCancel) {
       const timer = setTimeout(() => setCountdown((c) => c - 1), 1000);
@@ -260,28 +266,51 @@ const ThankYou = () => {
     if (countdown === 0) setCanCancel(false);
   }, [countdown, canCancel]);
 
-  // ✅ Send confirmation email after placing order
+  // ✅ Send confirmation email (formatted safely)
   useEffect(() => {
     if (!order || !order.email) return;
 
-    const emailParams = {
-      email: order.email || "guest@example.com",
-      customer_name: order.name || order.customer_name || "Customer",
-      order_id: order.id || "Unknown",
-      order_date: formattedDate,
-      status: order.status || "Pending",
-      status_class: statusKey,
-      amount:
-        typeof order.amount === "number" ? order.amount.toFixed(2) : "0.00",
-    };
+    const formattedItemsHTML = Array.isArray(order.items)
+  ? order.items
+      .map(
+        (item) => `
+          <tr>
+            <td>${item.name || item.itemName || "Item"}</td>
+            <td>${item.qty || 1}</td>
+            <td>₹${item.price || 0}</td>
+          </tr>`
+      )
+      .join("")
+  : "<tr><td colspan='3'>No items listed.</td></tr>";
+
+const emailParams = {
+  email: order.email,
+  customer_name: order.name || "Customer",
+  order_id: order.id,
+  order_date: formattedDate,
+  status: order.status || "Pending",
+  amount:
+    typeof order.amount === "number"
+      ? order.amount.toFixed(2)
+      : String(order.amount || "0.00"),
+  items_html: formattedItemsHTML,
+};
+
+
+    console.log("📧 Sending confirmation email:", emailParams);
 
     emailjs
-      .send("service_vpomnph", "template_udv3zrh", emailParams, "uFMWqshSnK5ZXMCmN")
+      .send(
+        "service_vpomnph", // your service ID
+        "template_udv3zrh", // confirmation template ID
+        emailParams,
+        "uFMWqshSnK5ZXMCmN" // public key
+      )
       .then(() => console.log("✅ Order confirmation email sent"))
       .catch((error) => console.error("❌ Email sending failed:", error));
-  }, [order, formattedDate, statusKey]);
+  }, [order, formattedDate]);
 
-  // 🗑️ Handle order cancellation
+  // ❌ Handle Cancel Order
   const handleCancelOrder = async () => {
     if (!order.id || !order.email) return alert("Invalid order data.");
 
@@ -290,7 +319,6 @@ const ThankYou = () => {
 
     try {
       setIsCancelling(true);
-
       const q = query(collection(db, source), where("id", "==", order.id));
       const querySnapshot = await getDocs(q);
 
@@ -301,26 +329,30 @@ const ThankYou = () => {
 
       const docRef = querySnapshot.docs[0].ref;
       await updateDoc(docRef, { status: "cancelled" });
+
       console.log("🚫 Order marked as cancelled in Firestore.");
 
-      // 📩 Send cancellation email
       const cancelParams = {
         email: order.email,
-        customer_name: order.name || order.customer_name || "Customer",
-        order_id: order.id,
+        customer_name: order.name || "Customer",
+        order_id: `#${orderNumber}`,
         order_date: formattedDate,
         amount:
-          typeof order.amount === "number" ? order.amount.toFixed(2) : "0.00",
+          typeof order.amount === "number"
+            ? order.amount.toFixed(2)
+            : String(order.amount || "0.00"),
       };
+
+      console.log("📧 Sending cancellation email:", cancelParams);
 
       await emailjs.send(
         "service_vpomnph",
-        "template_vcvwcfv",
+        "template_vcvwcfv", // cancellation template ID
         cancelParams,
         "uFMWqshSnK5ZXMCmN"
       );
 
-      alert("Order cancelled successfully! A confirmation email has been sent.");
+      alert("Order cancelled successfully! Confirmation email sent.");
       navigate(`/my-orders?source=${source}`);
     } catch (error) {
       console.error("❌ Error cancelling order:", error);
@@ -341,9 +373,10 @@ const ThankYou = () => {
           Your order has been placed successfully. You’ll receive a confirmation email shortly.
         </p>
 
-        {/* Order Summary Card */}
+        {/* Order Summary */}
         <div className="mb-6 text-left border rounded-lg p-4 shadow-sm bg-white">
           <h3 className="text-xl font-semibold mb-2">Order Summary</h3>
+          <p><strong>Order No.:</strong> #{orderNumber}</p>
           <p><strong>Order ID:</strong> {order.id}</p>
           <p><strong>Order Date:</strong> {formattedDate}</p>
           <p><strong>Email:</strong> {order.email}</p>
@@ -364,20 +397,22 @@ const ThankYou = () => {
               : String(order.amount) || "0.00"}
           </p>
 
-          {/* Print Files if any */}
-          {Array.isArray(order.fileNames) && order.fileNames.length > 0 && (
+          {Array.isArray(order.items) && order.items.length > 0 && (
             <div className="mt-4">
-              <p className="font-semibold text-gray-700 mb-1">Files:</p>
+              <p className="font-semibold text-gray-700 mb-1">Items:</p>
               <ul className="list-disc list-inside text-sm text-gray-600">
-                {order.fileNames.map((file, index) => (
-                  <li key={index}>{file}</li>
+                {order.items.map((item, index) => (
+                  <li key={index}>
+                    {item.name || item.itemName} × {item.qty || 1} — ₹
+                    {item.price || 0}
+                  </li>
                 ))}
               </ul>
             </div>
           )}
         </div>
 
-        {/* Buttons Section */}
+        {/* Actions */}
         <div className="flex flex-col gap-3">
           <Link
             to="/"
@@ -393,7 +428,6 @@ const ThankYou = () => {
             View My Orders
           </Link>
 
-          {/* Cancel Button (visible for 30s) */}
           {canCancel ? (
             <button
               onClick={handleCancelOrder}
@@ -405,9 +439,7 @@ const ThankYou = () => {
               }`}
             >
               <XCircle className="w-5 h-5" />
-              {isCancelling
-                ? "Cancelling..."
-                : `Cancel Order (${countdown}s left)`}
+              {isCancelling ? "Cancelling..." : `Cancel Order (${countdown}s left)`}
             </button>
           ) : (
             <p className="text-gray-500 text-sm italic mt-2">

@@ -373,6 +373,7 @@ const Navbar = ({ visible }) => {
         ? [{ label: "Stock", to: `/stock/${shopKey}` }]
         : []),
       { label: "Contact us", to: "/contact" },
+      { label: "Order history", to: "/order-history" },
     ]
   : [
       { label: "Home", to: "/student-dashboard" },

@@ -148,6 +148,7 @@ import MyOrders from "./pages/MyOrders";
 import Map from "./pages/Map";
 import Orders from "./pages/ordersReceived";
 import Stock from "./pages/Stock";
+import OrderHistory from "./pages/orderHistory";
 
 import { getRedirectResult, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase";
@@ -258,6 +259,8 @@ function App() {
 
             {/* 📬 Orders Received (Admin) */}
             <Route path="/orders-received" element={<Orders />} />
+
+            <Route path="/order-history" element={<OrderHistory user={user} />} />
 
             {/* 📦 Stock (based on logged-in email) */}
             <Route

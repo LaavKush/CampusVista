@@ -221,6 +221,8 @@ import {
   orderBy,
   deleteDoc,
   doc,
+  updateDoc,
+  where,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "../context/AuthContext";
@@ -282,14 +284,20 @@ const OrdersReceived = () => {
 
         let shopOrders = [];
         if (shopName === "tuckshop") {
-          shopOrders = allOrders.filter((o) => o.status === "Success");
-        } else {
-          shopOrders = allOrders.filter(
-            (order) =>
-              order.items?.some((item) => item.shopName === shopName) &&
-              order.status?.toLowerCase() !== "cancelled"
-          );
-        }
+  shopOrders = allOrders.filter(
+    (o) => 
+      o.status === "Success" &&
+      (o.prepared === false || o.prepared === undefined) // 🚫 exclude prepared ones
+  );
+} else {
+  shopOrders = allOrders.filter(
+    (order) =>
+      order.items?.some((item) => item.shopName === shopName) &&
+      order.status?.toLowerCase() === "success" &&
+      (order.prepared === false || order.prepared === undefined)
+  );
+}
+
 
         setOrders(shopOrders);
         setFilteredOrders(shopOrders);
@@ -346,7 +354,6 @@ const OrdersReceived = () => {
     const { data, error: downloadError } = await supabase.storage
       .from("pageOrders")
       .download(cleanPath);
-
     if (downloadError) throw downloadError;
 
     // Trigger browser download
@@ -357,24 +364,52 @@ const OrdersReceived = () => {
     a.click();
     window.URL.revokeObjectURL(blobUrl);
 
-    // 2️⃣ Delete file from Supabase
-    const { error: deleteError } = await supabase.storage
-      .from("pageOrders")
-      .remove([cleanPath]);
+    // ✅ 2️⃣ Instead of deleting, mark as prepared in Firestore
+    const orderRef = doc(db, "printOrders", orderId);
+    await updateDoc(orderRef, { prepared: true });
 
-    if (deleteError) throw deleteError;
+    // ✅ 3️⃣ Update local state
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, prepared: true } : o))
+    );
+    setFilteredOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, prepared: true } : o))
+    );
 
-    // 3️⃣ Delete Firestore order document
-    await deleteDoc(doc(db, "printOrders", orderId));
-
-    // 4️⃣ Update local state (optional)
-    setFilteredOrders((prev) => prev.filter((o) => o.id !== orderId));
-    setOrders((prev) => prev.filter((o) => o.id !== orderId));
-
-    alert("✅ File downloaded & deleted from Supabase + Firestore!");
+    alert("✅ File downloaded & marked as prepared!");
   } catch (err) {
-    console.error("❌ Error downloading/deleting:", err);
-    alert("❌ Failed to process file. Check console.");
+    console.error("❌ Error processing file:", err);
+    alert("❌ Failed to mark as prepared. Check console.");
+  }
+};
+
+// 🔹 Mark order as prepared (for other shops)
+const handleOrderDone = async (orderId) => {
+  try {
+     console.log("Updating order:", orderId);
+    const q = query(collection(db, "orders"), where("id", "==", orderId));
+    const querySnapshot = await getDocs(q);
+
+    if (querySnapshot.empty) {
+      alert("❌ Order not found!");
+      return;
+    }
+
+    const orderDoc = querySnapshot.docs[0].ref;
+    await updateDoc(orderDoc, {
+      prepared: true,
+    });
+
+    setOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, prepared: true } : o))
+    );
+    setFilteredOrders((prev) =>
+      prev.map((o) => (o.id === orderId ? { ...o, prepared: true } : o))
+    );
+
+    alert("✅ Order marked as prepared!");
+  } catch (err) {
+    console.error("❌ Error marking prepared:", err);
   }
 };
 
@@ -465,7 +500,7 @@ const OrdersReceived = () => {
   className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-green-600 text-white font-medium text-sm rounded-xl shadow-md hover:from-teal-700 hover:to-green-700 transform hover:scale-105 transition-all duration-200"
 >
   <span>⬇️</span>
-  <span>Download & Delete</span>
+  <span>Download & prepare order</span>
 </button>
 
 
@@ -498,14 +533,13 @@ const OrdersReceived = () => {
                       </p>
                     )}
                     {/* ✅ Show "Order Prepared" only for non-tuckshop shops */}
-{shopName !== "tuckshop" && (
-  <button
-    onClick={() => handleOrderDone(order.id)}
-    className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-green-600 text-white font-semibold rounded-xl shadow-md hover:from-teal-700 hover:to-green-700 transform hover:scale-105 transition-all duration-200"
-  >
-    ✅ Order Prepared
-  </button>
-)}
+{/* <button
+  onClick={() => handleOrderDone(order.id)}  
+  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-teal-600 to-green-600 text-white font-semibold rounded-xl shadow-md hover:from-teal-700 hover:to-green-700 transform hover:scale-105 transition-all duration-200"
+>
+  ✅ Order Prepared
+</button> */}
+
 
                   </div>
                 </div>
