@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus 360° Virtual Tour</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+
+    <style>
+        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; }
+        #panorama { 
+            width: 100%; 
+            height: 100vh;
+            position: absolute;
+            z-index: 10;
+        }
+        #map-container {m
+        Turn left	100 m
+        Make a sharp right	2 km
+        Turn left onto Loni Road (NH709B)	25 km
+        Turn right onto NH709B	55 km
+        Keep right onto NH709B	40 km
+        Turn right onto MDR2W
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 250px;
+            height: 250px;
+            z-index: 1000;
+            border: 3px solid #004a99;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        #map-container.hidden {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        #map { 
+            width: 100%; 
+            height: 100%; 
+        }
+    </style>
+</head>
+<body>
+
+    <div id="panorama"></div>
+    <div id="map-container" onclick="toggleMap()">
+        <div id="map"></div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+    
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-u7p8XG6v2NlM5UuLqF2F/iY2u9F2FfP6U5F2FvF2F0="
+        crossorigin=""></script>
+
+    <script>
+        // =========================================================================
+        // A. VIRTUAL TOUR DATA STRUCTURE (ALL LOWERCASE, NO SPACES/UNDERSCORES)
+        // =========================================================================
+
+        const campusLocations = {
+            "entrance_gate": {
+                "title": "Main Gate Entrance",
+                "image": "panorama/entrance2.jpg", 
+                "lat": 28.665834,
+                "lng": 77.232432,
+                "hotspots": [
+                    { "pitch": 0, "yaw": -45, "type": "scene", "text": "Enter Campus", "sceneId": "main_road" }
+                ]
+            },
+            "main_road": {
+                "title": "College Road",
+                "image": "panorama/entrance.jpg",
+                "lat": 28.665830,
+                "lng": 77.232254,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "Back to Gate", "sceneId": "entrance_gate" },
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "Towards Admin Block", "sceneId": "admin_block" },
+                    { "pitch": 0, "yaw": -90, "type": "scene", "text": "Towards Building 1", "sceneId": "panorama_7" }
+                ]
+            },
+            "admin_block": {
+                "title": "Administrative Block",
+                "image": "panorama/administrativeblock.jpg", 
+                "lat": 28.664414,
+                "lng": 77.233464,
+                "hotspots": [
+                    { "pitch": 0, "yaw": -180, "type": "scene", "text": "Back to Main Road", "sceneId": "main_road" },
+                    { "pitch": 0, "yaw": 45, "type": "scene", "text": "Towards Computer Centre", "sceneId": "comp_center" },
+                    { "pitch": 0, "yaw": -45, "type": "scene", "text": "Near Building 2", "sceneId": "panorama_19" }
+                ]
+            },
+            "comp_center": {
+                "title": "Computer Centre",
+                "image": "panorama/computercentre.jpg", 
+                "lat": 28.664119,
+                "lng": 77.233184,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "Back to Admin Block", "sceneId": "admin_block" },
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "Towards Exam Division", "sceneId": "exam_div" },
+                    { "pitch": 0, "yaw": 270, "type": "scene", "text": "Towards Tiwari Ji Shop", "sceneId": "tiwari_ji" }
+                ]
+            },
+            "tiwari_ji": {
+                "title": "Tiwari Ji Snack/Shop",
+                "image": "panorama/tiwariji.jpg", 
+                "lat": 28.663922,
+                "lng": 77.232877,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 270, "type": "scene", "text": "Back to Computer Centre", "sceneId": "comp_center" },
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "Towards MAE/Nescafe", "sceneId": "mae_nescafe" }
+                ]
+            },
+            "mae_nescafe": {
+                "title": "MAE Block to Nescafe",
+                "image": "panorama/maetonescafe.jpg", 
+                "lat": 28.664846,
+                "lng": 77.233166,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "Back to Tiwari Ji", "sceneId": "tiwari_ji" },
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "Towards Mechanical Block", "sceneId": "mechanical" }
+                ]
+            },
+            "mechanical": {
+                "title": "Mechanical Block",
+                "image": "panorama/mechanical.jpg",
+                "lat": 28.664004, 
+                "lng": 77.232994, 
+                "hotspots": [
+                    { "pitch": 0, "yaw": -90, "type": "scene", "text": "Towards MAE/Nescafe", "sceneId": "mae_nescafe" },
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "Towards IT Block", "sceneId": "it_front" }
+                ]
+            },
+            "it_front": {
+                "title": "IT Block Front",
+                "image": "panorama/IT.jpg",
+                "lat": 28.663922,
+                "lng": 77.232885,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "Back to Mechanical", "sceneId": "mechanical" },
+                    { "pitch": 0, "yaw": 135, "type": "scene", "text": "Around to IT Back", "sceneId": "it_back" }
+                ]
+            },
+            "it_back": {
+                "title": "IT Block Back",
+                "image": "panorama/itback.jpg", 
+                "lat": 28.665457, 
+                "lng": 77.232994, 
+                "hotspots": [
+                    { "pitch": 0, "yaw": -45, "type": "scene", "text": "Back to IT Front", "sceneId": "it_front" },
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "Towards Sitting Area", "sceneId": "sitting_area" }
+                ]
+            },
+            "sitting_area": {
+                "title": "Sitting Area/Park",
+                "image": "panorama/sittingarea.jpg", 
+                "lat": 28.665457,
+                "lng": 77.232994,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "Back to IT Back", "sceneId": "it_back" },
+                    { "pitch": 0, "yaw": 45, "type": "scene", "text": "Towards Hostel Road", "sceneId": "hostel_sit" }
+                ]
+            },
+            "hostel_sit": {
+                "title": "Hostel Road Sitting Area",
+                "image": "panorama/hosteltosittingarea.jpg", 
+                "lat": 28.665055,
+                "lng": 77.232122,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 225, "type": "scene", "text": "Back to Sitting Area", "sceneId": "sitting_area" },
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "Towards Hostel Exit", "sceneId": "hostel_exit" }
+                ]
+            },
+            "hostel_exit": {
+                "title": "Hostel Exit Road",
+                "image": "panorama/hosteltoexit.jpg", 
+                "lat": 28.665055, 
+                "lng": 77.232122, 
+                "hotspots": [
+                    { "pitch": 0, "yaw": -90, "type": "scene", "text": "Back to Hostel Sitting", "sceneId": "hostel_sit" },
+                    { "pitch": 0, "yaw": 45, "type": "scene", "text": "Towards ECE/Basketball", "sceneId": "ece_basketball" }
+                ]
+            },
+            "ece_basketball": {
+                "title": "ECE to Basketball Court",
+                "image": "panorama/ecetobasketball.jpg", 
+                "lat": 28.664461,
+                "lng": 77.232507,
+                "hotspots": [
+                    { "pitch": 0, "yaw": -45, "type": "scene", "text": "Towards Hostel Exit", "sceneId": "hostel_exit" },
+                    { "pitch": 0, "yaw": -180, "type": "scene", "text": "Towards ECE Block", "sceneId": "ece_block" }
+                ]
+            },
+            "ece_block": {
+                "title": "ECE Block",
+                "image": "panorama/ece.jpg",
+                "lat": 28.664461,
+                "lng": 77.232507,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "Towards Basketball Court", "sceneId": "ece_basketball" },
+                    { "pitch": 0, "yaw": 270, "type": "scene", "text": "Towards Main Ground", "sceneId": "ground" }
+                ]
+            },
+            "ground": {
+                "title": "Main Sports Ground",
+                "image": "panorama/ground.jpg",
+                "lat": 28.664670,
+                "lng": 77.233097,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "Towards ECE Block", "sceneId": "ece_block" },
+                    { "pitch": 0, "yaw": -90, "type": "scene", "text": "Towards GCE Block", "sceneId": "gce_block" }
+                ]
+            },
+            "gce_block": {
+                "title": "GCE Block / Garden",
+                "image": "panorama/GCE.jpg",
+                "lat": 28.664219,
+                "lng": 77.232525,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "Towards Ground", "sceneId": "ground" },
+                    { "pitch": 0, "yaw": -90, "type": "scene", "text": "Towards Cafe/TNP", "sceneId": "cafe_tnp" }
+                ]
+            },
+            "cafe_tnp": {
+                "title": "Cafe & TnP Section",
+                "image": "panorama/cafetotnp.jpg", 
+                "lat": 28.664004, 
+                "lng": 77.232994, 
+                "hotspots": [
+                    { "pitch": 0, "yaw": 90, "type": "scene", "text": "Back to GCE Block", "sceneId": "gce_block" },
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "Towards Exam Division", "sceneId": "exam_div" }
+                ]
+            },
+            "exam_div": {
+                "title": "Exam Division/Tuck Shop",
+                "image": "panorama/examdivision.jpg", 
+                "lat": 28.664006,
+                "lng": 77.232997,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "Towards Cafe/TNP", "sceneId": "cafe_tnp" },
+                    { "pitch": 0, "yaw": -90, "type": "scene", "text": "Towards Computer Centre", "sceneId": "comp_center" }
+                ]
+            },
+            "panorama_7": {
+                "title": "Building 1 (Library Area)",
+                "image": "panorama/panorama7.jpg", 
+                "lat": 28.664086,
+                "lng": 77.233217,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 180, "type": "scene", "text": "Back to Main Road", "sceneId": "main_road" }
+                ]
+            },
+            "panorama_19": {
+                "title": "Building 2 (Dispensary Area)",
+                "image": "panorama/panorama19.jpg", 
+                "lat": 28.664004,
+                "lng": 77.232994,
+                "hotspots": [
+                    { "pitch": 0, "yaw": 0, "type": "scene", "text": "Back to Admin Block", "sceneId": "admin_block" }
+                ]
+            }
+        };
+
+        // =========================================================================
+        // B. PANNELLUM AND LEAFLET INITIALIZATION (No functional changes)
+        // =========================================================================
+        
+        let viewer;
+        let map;
+        let mapMarkers = {};
+        let activeLocationKey = "entrance_gate"; 
+
+        function initializePannellum() {
+            const scenes = {};
+            for (const key in campusLocations) {
+                const location = campusLocations[key];
+                
+                const pannellumHotspots = location.hotspots.map(h => ({
+                    ...h,
+                    sceneId: h.sceneId,
+                    createTooltipFunc: createHotspotTooltip,
+                    clickHandlerFunc: clickHotspot
+                }));
+
+                scenes[key] = {
+                    "title": location.title,
+                    "type": "equirectangular",
+                    "pano": location.image,
+                    "hotSpots": pannellumHotspots
+                };
+            }
+
+            viewer = pannellum.viewer('panorama', {
+                "default": {
+                    "firstScene": activeLocationKey,
+                    "sceneFadeDuration": 1000,
+                    "autoLoad": true,
+                    "haov": 360,
+                    "vaov": 180,
+                    "vOffset": 0,
+                    "showZoom": false,
+                    "keyboardZoom": false,
+                    "mouseZoom": false 
+                },
+                "scenes": scenes
+            });
+            
+            viewer.on('load', function() {
+                activeLocationKey = viewer.getScene();
+                updateMapMarker();
+            });
+        }
+
+        function initializeLeafletMap() {
+            const initialCoords = [campusLocations[activeLocationKey].lat, campusLocations[activeLocationKey].lng];
+            
+            map = L.map('map', { 
+                center: initialCoords, 
+                zoom: 18,
+                zoomControl: false,
+                attributionControl: false
+            });
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+            }).addTo(map);
+
+            for (const key in campusLocations) {
+                const location = campusLocations[key];
+                const marker = L.circleMarker([location.lat, location.lng], {
+                    radius: 6,
+                    color: '#004a99',
+                    fillColor: '#004a99',
+                    fillOpacity: 1
+                })
+                .addTo(map)
+                .bindTooltip(location.title, { permanent: false, direction: 'right' })
+                .on('click', () => {
+                    changeScene(key);
+                });
+                mapMarkers[key] = marker;
+            }
+            
+            updateMapMarker();
+        }
+        
+        // =========================================================================
+        // C. MAP & VIEWER FUNCTIONS (No functional changes)
+        // =========================================================================
+
+        function createHotspotTooltip(hotSpotDiv, args) {
+            hotSpotDiv.classList.add('custom-hotspot');
+            const span = document.createElement('span');
+            span.innerHTML = args.text;
+            hotSpotDiv.appendChild(span);
+        }
+
+        function clickHotspot(e) {
+            activeLocationKey = e.sceneId;
+            updateMapMarker();
+        }
+
+        function changeScene(newSceneId) {
+            if (newSceneId !== activeLocationKey) {
+                viewer.loadScene(newSceneId);
+                activeLocationKey = newSceneId;
+                updateMapMarker();
+            }
+        }
+
+        function updateMapMarker() {
+            for (const key in mapMarkers) {
+                mapMarkers[key].setStyle({ fillColor: '#004a99', color: '#004a99', radius: 6 });
+            }
+
+            const activeMarker = mapMarkers[activeLocationKey];
+            if (activeMarker) {
+                activeMarker.setStyle({ fillColor: '#cc0000', color: '#cc0000', radius: 8 });
+                
+                const latlng = activeMarker.getLatLng();
+                map.panTo(latlng);
+            }
+        }
+
+        function toggleMap() {
+            const mapContainer = document.getElementById('map-container');
+            if (mapContainer.classList.contains('hidden')) {
+                mapContainer.classList.remove('hidden');
+                setTimeout(() => { map.invalidateSize(); }, 300); 
+            } else {
+                mapContainer.classList.add('hidden');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initializePannellum();
+            initializeLeafletMap();
+        });
+    </script>
+
+</body>
+</html>

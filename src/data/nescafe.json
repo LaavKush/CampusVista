@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Cold Coffee",
+    "price": 40,
+    "image": "/images/cold-coffee.jpg",
+    "description": "Chilled and refreshing coffee blended with milk and sugar.",
+    "category": "Beverages"
+  },
+  {
+    "name": "Hot Coffee",
+    "price": 30,
+    "image": "/images/hot-coffee.jpg",
+    "description": "Classic brewed coffee served hot with a rich aroma.",
+    "category": "Beverages"
+  },
+  {
+    "name": "Cup Noodles",
+    "price": 80,
+    "image": "/images/noodles.jpeg",
+    "description": "Instant cup noodles served hot and spicy.",
+    "category": "Snacks"
+  },
+  {
+    "name": "Cappuccino",
+    "price": 55,
+    "image": "/images/cappuccino.jpg",
+    "description": "Espresso-based drink topped with frothy milk foam.",
+    "category": "Beverages"
+  },
+  {
+    "name": "Hot Chocolate",
+    "price": 45,
+    "image": "/images/hot-chocolate.jpg",
+    "description": "Warm and creamy chocolate drink for cozy moments.",
+    "category": "Beverages"
+  },
+  {
+    "name": "Latte",
+    "price": 50,
+    "image": "/images/latte.jpg",
+    "description": "Smooth espresso mixed with steamed milk for a creamy texture.",
+    "category": "Beverages"
+  },
+  {
+    "name": "Mocha",
+    "price": 55,
+    "image": "/images/mocha.jpg",
+    "description": "Perfect blend of coffee and chocolate, topped with cream.",
+    "category": "Beverages"
+  },
+  {
+    "name": "Choco Frappe",
+    "price": 60,
+    "image": "/images/choco-frappe.jpg",
+    "description": "Icy chocolate-coffee blend topped with whipped cream.",
+    "category": "Beverages"
+  },
+  {
+    "name": "Espresso",
+    "price": 50,
+    "image": "/images/espresso.jpg",
+    "description": "Strong, bold coffee shot with intense flavor.",
+    "category": "Beverages"
+  },
+  {
+    "name": "Veg Sandwich",
+    "price": 50,
+    "image": "/images/veg-sandwich.jpg",
+    "description": "Fresh veggies and sauces between soft sandwich bread.",
+    "category": "Snacks"
+  },
+  {
+    "name": "Brownie",
+    "price": 40,
+    "image": "/images/brownie.jpg",
+    "description": "Rich and fudgy chocolate brownie baked to perfection.",
+    "category": "Desserts"
+  },
+  {
+    "name": "Chocolate Donut",
+    "price": 45,
+    "image": "/images/choco-donut.jpg",
+    "description": "Soft donut glazed with delicious chocolate coating.",
+    "category": "Desserts"
+  }
+]
