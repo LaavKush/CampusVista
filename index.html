@@ -5,22 +5,18 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Tailwind CSS for modern aesthetics and responsiveness -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="logo.png">
     
-    <!-- 1. Leaflet CSS (MANDATORY) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
           crossorigin=""/>
 
-    <!-- 2. Leaflet Routing Machine CSS (REQUIRED for directions) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
 
-    <!-- 3. Three.js for 360° Panorama Simulation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <style>
@@ -176,7 +172,6 @@ body {
   <p class="text-gray-500 mt-1">Explore campus services and virtual tours.</p>
 </header>
 
-<!-- 360 Panorama Modal -->
 <div id="panorama-modal">
   <div id="panorama-viewer">
     <h2 
@@ -194,7 +189,6 @@ body {
   </div>
 </div>
 
-<!-- Services Modal -->
 <div id="services-modal">
   <div id="services-modal-content" class="relative bg-white rounded-2xl p-8 shadow-lg">
     <button 
@@ -209,16 +203,13 @@ body {
     <h2 id="services-title" class="text-4xl font-extrabold text-[#118c82] mb-6 border-b-4 border-[#118c82] pb-2"></h2>
 
     <div id="services-details" class="space-y-8">
-      <!-- Dynamic content injected here -->
-    </div>
+      </div>
   </div>
 </div>
 
     
-    <!-- MAIN CONTENT CONTAINER -->
-<div class="main-container mx-auto max-w-7xl">
+    <div class="main-container mx-auto max-w-7xl">
     
-    <!-- SIDEBAR (Collapsible) -->
     <div id="sidebar" class="p-4">
         <div class="flex justify-between items-center mb-4 border-b pb-2">
             <h2 class="text-xl font-bold text-gray-800 sidebar-text">Campus Locations</h2>
@@ -231,7 +222,6 @@ body {
             </button>
         </div>
 
-        <!-- Location Menu -->
         <div id="menu-content">
             <h3 class="font-semibold text-[#118c82] mt-3 mb-1 sidebar-text">Departments</h3>
             <div class="space-y-1 ml-2" id="department-list"></div>
@@ -241,10 +231,8 @@ body {
         </div>
     </div>
 
-    <!-- MAP AND CONTROLS AREA -->
     <div id="map-area">
 
-        <!-- ROUTE SUMMARY PANEL -->
         <div id="route-summary"
             class="bg-white p-4 rounded-lg shadow-xl border-t-4 border-[#118c82] mb-4 mx-auto hidden">
             <p class="text-lg font-semibold text-gray-700">Route Summary</p>
@@ -252,17 +240,15 @@ body {
             <p id="summary-time" class="text-sm text-gray-600"></p>
         </div>
 
-        <!-- MAIN CONTROL PANEL (Location, POI) -->
         <div id="controls"
             class="flex flex-wrap justify-center items-center gap-3 mb-4 p-4 bg-white rounded-lg shadow-lg">
             
-            <!-- Auto Locate -->
             <button id="locate-button"
                 class="bg-[#0f6f68] hover:bg-[#0c5a54] text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105 flex items-center w-full sm:w-auto text-sm">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.244-4.243a8 8 0 1111.314 0z">
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0l-4.244-4.243a8 8 8 1111.314 0z">
                     </path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -275,13 +261,11 @@ body {
             <input type="number" id="lng-input" placeholder="Lng" value="-73.9665" step="any"
                 class="p-2 border border-gray-300 rounded-lg w-16 sm:w-24 text-sm">
 
-            <!-- Manual Set -->
             <button id="set-manual-button"
                 class="bg-[#22b6a9] hover:bg-[#1ba095] text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 transform hover:scale-105 w-full sm:w-auto text-sm">
                 Set Manual
             </button>
 
-            <!-- POI Search -->
             <input type="text" id="poi-search-input" placeholder="Search POI (e.g., 'cafe')"
                 class="p-2 border border-gray-300 rounded-lg w-full md:w-48 text-sm focus:ring-[#118c82] focus:border-[#118c82]">
             <button id="poi-search-button"
@@ -290,13 +274,11 @@ body {
             </button>
         </div>
 
-        <!-- ROUTING SETUP PANEL -->
         <div id="routing-panel"
             class="mb-4 p-4 bg-gray-100 rounded-lg shadow-inner border-l-4 border-[#118c82]">
             <h2 class="text-xl font-bold text-gray-800 mb-3">Custom Routing (Address Search)</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 
-                <!-- Start Point -->
                 <div class="bg-white p-3 rounded-lg border">
                     <p class="font-semibold text-sm text-[#0f6f68] mb-2">Start Point:</p>
                     <input type="text" id="start-address-input" placeholder="Start Address"
@@ -314,7 +296,6 @@ body {
                     <div id="start-coords-display" class="text-xs text-gray-600 mt-2">Not Set</div>
                 </div>
 
-                <!-- End Point -->
                 <div class="bg-white p-3 rounded-lg border">
                     <p class="font-semibold text-sm text-[#0f6f68] mb-2">End Point:</p>
                     <input type="text" id="end-address-input" placeholder="End Address"
@@ -326,27 +307,26 @@ body {
                     <div id="end-coords-display" class="text-xs text-gray-600 mt-2">Not Set</div>
                 </div>
             </div>
+            <button id="clear-route-button"
+                class="mt-3 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 w-full text-sm">
+                Clear Route
+            </button>
         </div>
 
         <div id="map"></div>
 
-    </div> <!-- END map-area -->
-</div>
+    </div> </div>
 
 
-    </div> <!-- END main-container -->
-
-    <!-- 4. Leaflet JavaScript (MANDATORY) -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    </div> <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
             crossorigin=""></script>
     
-    <!-- 5. Leaflet Routing Machine JavaScript -->
     <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
     
     <script>
         // --- GLOBAL STATE & CONFIGURATION ---
-        let map; // Initialized later
+        let map ; // Initialized later
         let userLocationMarker = null; 
         let userAccuracyCircle = null;
         let poiLayerGroup = null; 
@@ -382,7 +362,7 @@ body {
             return `https://placehold.co/${width}x${height}/${color}/ffffff?text=${firstName.charAt(0)}`;
         }
 const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
-        // Campus Data Structure - UPDATED with detailed Lab Information
+        // Campus Data Structure - CORRECTED AND UPDATED
         const campusLocations = {
             'cse': { 
                 name: 'Computer Science & Engineering Block', lat: 28.6145, lng: 77.2100, isDept: true, 
@@ -668,11 +648,44 @@ const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
                     ]
                 }
             },
-            // Non-departmental buildings (no "Services" button)
-            'admin': { name: 'Admin & Examination Block', lat: 28.6155, lng: 77.2090, isDept: false },
-            'library': { name: 'Central Library', lat: 28.6130, lng: 77.2090, isDept: false },
-            'gce': { name: 'General Classroom East Block', lat: 28.6148, lng: 77.2097, isDept: false },
-            'gazebo': { name: 'Student Gazebo Area', lat: 28.6138, lng: 77.2088, isDept: false }
+            // Non-departmental buildings - MODIFIED to contain a placeholder service object
+            'admin': { 
+                name: 'Admin & Examination Block', lat: 28.6155, lng: 77.2090, isDept: false,
+                services: {
+                    about_summary: 'This block houses the main administrative offices, examination division, and key student services.Student dealing time : 10 am - 11 am , 3 pm - 4pm',
+                    hod: { name: 'Administration Office', designation: 'Key Office', img: getPlaceholderImg('Admin Office') },
+                    professors: [], // No professors in an admin building context
+                   
+                }
+            },
+            'library': { 
+                name: 'Central Library', lat: 28.6130, lng: 77.2090, isDept: false,
+                services: {
+                    about_summary: 'Learning Resource Centre (LRC) serves as the premier source of academic information for the IGDTUW community through its collections, educational and consulting services. The LRC has a highly selective collection of print, electronic, and audiovisual materials in the areas of science, engineering, technology and management to support the learning and research activities of students and faculty. A number of e- journals are being subscribed through consortia mode subscription. All these journals are available online to the member of the LRC in campus LAN. The Digital Library section has e-materials like CDs, DVDs and digital thesis of final year students and are available through an Open Source Institution Repository Software within the campus premises. Library is functional 24x7 in university campus.',
+                    hod: { name: 'Chief Librarian', designation: 'Head of Resources', img: getPlaceholderImg('library.jpg') },
+                    professors: [],
+                    syllabus: {'Hours & Access' : { PDFurl: null, text: 'Open Monday-Friday, 9:00 AM - 7:00 PM.' }},
+                    labs: []
+                }
+            },
+            'gce': { 
+                name: 'General Classroom East Block', lat: 28.6148, lng: 77.2097, isDept: false,
+                services: {
+                    about_summary: 'A central hub for general college  cultural societies for all engineering departments.',
+                    hod: { name: '-', img: getPlaceholderImg('GCE.jpg') },
+                    professors: [],
+                    
+                }
+            },
+            'gazebo': { 
+                name: 'Student Gazebo Area', lat: 28.6138, lng: 77.2088, isDept: false,
+                services: {
+                    about_summary: ' Also known as Sitting Area , A common outdoor area for students to meet, study, and relax. Often hosts small student-led activities.',
+                    hod: { name: 'Student Services', designation: 'Campus Life', img: getPlaceholderImg('sitting area.jpg') },
+                    professors: [],
+                    
+                }
+            }
         };
 
         // --- MAP INITIALIZATION ---
@@ -707,6 +720,20 @@ const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
                 document.getElementById('summary-distance').textContent = `Total Distance: ${summary.totalDistance < 1000 ? summary.totalDistance.toFixed(0) + ' m' : (summary.totalDistance / 1000).toFixed(1) + ' km'}`;
                 document.getElementById('summary-time').textContent = `Estimated Time: ${Math.floor(summary.totalTime / 60)} min`;
             });
+        }
+
+        // --- UTILITY FUNCTION FOR ROUTE CLEARING ---
+        function clearRoute() {
+            routeStartLatlng = null;
+            routeEndLatlng = null;
+            routingControl.setWaypoints([]); // Clear route lines
+            if (routeStartMarker) map.removeLayer(routeStartMarker);
+            if (routeEndMarker) map.removeLayer(routeEndMarker);
+            document.getElementById('start-coords-display').textContent = 'Not Set';
+            document.getElementById('end-coords-display').textContent = 'Not Set';
+            document.getElementById('start-address-input').value = '';
+            document.getElementById('end-address-input').value = '';
+            document.getElementById('route-summary').classList.add('hidden');
         }
         
         // --- ROUTING / GEOCODING FUNCTIONS ---
@@ -845,7 +872,10 @@ const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
         // 1. Complete Lab Card Rendering Helper
         function renderLabCards(key) {
             const loc = campusLocations[key];
-            if (!loc.services || !loc.services.labs || loc.services.labs.length === 0) return '';
+            // Handle cases where a non-departmental location has no labs
+            if (!loc.services || !loc.services.labs || loc.services.labs.length === 0) {
+                 return '<p class="text-gray-500 italic">No specific laboratories or dedicated facilities listed for this building.</p>';
+            }
             
             let cardsHtml = '';
             loc.services.labs.forEach(lab => {
@@ -883,99 +913,108 @@ const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
         // 2. Full Services Modal Generator
         function openServicesModal(key) {
             const loc = campusLocations[key];
-            if (!loc || !loc.services) return;
+            // Ensure services exists and has a structure to avoid errors
+            if (!loc || !loc.services) {
+                console.error(`No service data for location key: ${key}`);
+                return;
+            }
 
             document.getElementById('services-title').textContent = `${loc.name} Services & Details`;
             const detailsContainer = document.getElementById('services-details');
             
-            // Generate HTML for the modal content
+            // Use default empty arrays for safer mapping
+            const professors = loc.services.professors || [];
+            const labs = loc.services.labs || [];
+            const syllabus = loc.services.syllabus || {};
+
            let modalContent = `
-    <!-- Summary Section -->
-<div class="bg-[#e6f5f4] p-6 rounded-xl border border-[#b5e1dd]">
-  <h3 class="text-2xl font-bold text-[#118c82] mb-2">Department Overview</h3>
-  <p class="text-gray-700">${loc.services.about_summary || "Explore department details below."}</p>
-</div>
-
-<!-- HOD Section -->
-<div class="bg-[#e8f7f6] p-6 rounded-xl border border-[#b2e0dc]">
-  <h3 class="text-2xl font-bold text-[#118c82] mb-4">Head of Department (HOD)</h3>
-  <div class="flex items-center space-x-4">
-    <img src="${loc.services.hod.img}" alt="${loc.services.hod.name}"
-      onerror="this.onerror=null;this.src='${getPlaceholderImg('HOD')}'"
-      class="w-20 h-20 rounded-full object-cover shadow-md border-2 border-[#118c82]/50">
-    <div>
-      <p class="text-xl font-semibold text-gray-800">${loc.services.hod.name}</p>
-      <p class="text-sm text-[#118c82]">${loc.services.hod.designation}</p>
+        <div class="bg-[#e6f5f4] p-6 rounded-xl border border-[#b5e1dd]">
+      <h3 class="text-2xl font-bold text-[#118c82] mb-2">${loc.isDept ? 'Department Overview' : 'Building Overview'}</h3>
+      <p class="text-gray-700">${loc.services.about_summary || "No detailed summary available."}</p>
     </div>
-  </div>
-</div>
 
-<!-- Faculty Section -->
-<div>
-  <h3 class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">
-    Core Faculty (${loc.services.professors.length} Members)
-  </h3>
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-    ${loc.services.professors.map(p => `
-      <div class="bg-[#f3fbfa] p-4 rounded-lg shadow-md flex items-center space-x-3 border border-[#d6f1ee] hover:shadow-lg transition duration-200">
-        <img src="${p.img}" alt="${p.name}"
-          onerror="this.onerror=null;this.src='${getPlaceholderImg('Faculty')}'"
-          class="w-12 h-12 rounded-full object-cover border border-[#118c82]/40">
+    <div class="bg-[#e8f7f6] p-6 rounded-xl border border-[#b2e0dc]">
+      <h3 class="text-2xl font-bold text-[#118c82] mb-4">${loc.isDept ? 'Head of Department (HOD)' : 'Key Contact'}</h3>
+      <div class="flex items-center space-x-4">
+        <img src="${loc.services.hod.img}" alt="${loc.services.hod.name}"
+          onerror="this.onerror=null;this.src='${getPlaceholderImg('HOD')}'"
+          class="w-20 h-20 rounded-full object-cover shadow-md border-2 border-[#118c82]/50">
         <div>
-          <p class="font-medium text-gray-800">${p.name}</p>
-          <p class="text-xs text-gray-500">${p.designation}</p>
+          <p class="text-xl font-semibold text-gray-800">${loc.services.hod.name}</p>
+          <p class="text-sm text-[#118c82]">${loc.services.hod.designation}</p>
         </div>
       </div>
-    `).join('')}
-  </div>
-</div>
+    </div>
 
-<!-- Labs Section -->
-<div>
-  <h3 class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">Research & Practical Laboratories</h3>
-  <div class="space-y-4">
-    ${renderLabCards(key)}
-  </div>
-</div>
+    ${professors.length > 0 ? `
+    <div>
+      <h3 class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">
+        Core Faculty (${professors.length} Members)
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        ${professors.map(p => `
+          <div class="bg-[#f3fbfa] p-4 rounded-lg shadow-md flex items-center space-x-3 border border-[#d6f1ee] hover:shadow-lg transition duration-200">
+            <img src="${p.img}" alt="${p.name}"
+              onerror="this.onerror=null;this.src='${getPlaceholderImg('Faculty')}'"
+              class="w-12 h-12 rounded-full object-cover border border-[#118c82]/40">
+            <div>
+              <p class="font-medium text-gray-800">${p.name}</p>
+              <p class="text-xs text-gray-500">${p.designation}</p>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : ''}
 
-<!-- Syllabus Section -->
-<div>
-  <h3 class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">Syllabus Highlights</h3>
-  <div class="space-y-2">
-    ${Object.entries(loc.services.syllabus).map(([sem, data]) => `
-      <details class="group bg-[#ecfdfb] p-4 rounded-lg cursor-pointer transition duration-200 hover:bg-[#d9f5f1] border border-[#b8e8e3]">
-        <summary class="font-semibold text-[#118c82] flex justify-between items-center">
-          ${sem}
-          <svg class="w-5 h-5 text-[#118c82] transform group-open:rotate-180 transition duration-200"
-            fill="none" stroke="currentColor" viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-          </svg>
-        </summary>
-        ${
-          data.PDFurl
-          ? `<div class="mt-3 pl-4 border-l-2 border-[#118c82]">
-  <a href="${data.PDFurl}" target="_blank"
-    class="group inline-flex items-center gap-2 mt-2 bg-[#118c82] hover:bg-[#0e7c73]
-           text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm
-           transition-all duration-200 ease-in-out transform hover:scale-105">
-    <span class="text-lg">📘</span>
-    <span>View Syllabus PDF</span>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-      viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-      class="w-4 h-4 opacity-90 group-hover:translate-x-1 transition-transform duration-200">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M13 9l3 3m0 0l-3 3m3-3H8" />
-    </svg>
-  </a>
-</div>`
-          : `<p class="mt-3 pl-4 text-sm text-gray-700 border-l-2 border-[#118c82]">${data}</p>`
-        }
-      </details>
-    `).join('')}
-  </div>
-</div>
+    ${labs.length > 0 || loc.isDept ? `
+    <div>
+      <h3 class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">
+        ${loc.isDept ? 'Research & Practical Laboratories' : 'Key Facilities'}
+      </h3>
+      <div class="space-y-4">
+        ${renderLabCards(key)}
+      </div>
+    </div>
+    ` : ''}
 
-`;
+    <div>
+      <h3 class="text-3xl font-bold text-gray-800 mb-4 border-b pb-2">${loc.isDept ? 'Syllabus Highlights' : 'Key Information'}</h3>
+      <div class="space-y-2">
+        ${Object.entries(syllabus).map(([title, data]) => `
+          <details class="group bg-[#ecfdfb] p-4 rounded-lg cursor-pointer transition duration-200 hover:bg-[#d9f5f1] border border-[#b8e8e3]">
+            <summary class="font-semibold text-[#118c82] flex justify-between items-center">
+              ${title}
+              <svg class="w-5 h-5 text-[#118c82] transform group-open:rotate-180 transition duration-200"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            ${
+              data.PDFurl
+              ? `<div class="mt-3 pl-4 border-l-2 border-[#118c82]">
+      <a href="${data.PDFurl}" target="_blank"
+        class="group inline-flex items-center gap-2 mt-2 bg-[#118c82] hover:bg-[#0e7c73]
+               text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm
+               transition-all duration-200 ease-in-out transform hover:scale-105">
+        <span class="text-lg">📘</span>
+        <span>View Document PDF</span>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+          class="w-4 h-4 opacity-90 group-hover:translate-x-1 transition-transform duration-200">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 9l3 3m0 0l-3 3m3-3H8" />
+        </svg>
+      </a>
+    </div>`
+              : `<p class="mt-3 pl-4 text-sm text-gray-700 border-l-2 border-[#118c82]">${data.text}</p>` // Used 'data.text' for non-PDF content
+            }
+          </details>
+        `).join('')}
+      </div>
+    </div>
+
+    `;
 
             detailsContainer.innerHTML = modalContent;
             document.getElementById('services-modal').style.display = 'flex';
@@ -1129,6 +1168,8 @@ const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
                     console.log("Please use 'Find Me (Auto)' or 'Set Manual' first.");
                 }
             });
+            document.getElementById('clear-route-button').addEventListener('click', clearRoute);
+
 
             // Modal Close Listeners
             document.getElementById('close-panorama-button').addEventListener('click', closePanorama);
@@ -1137,7 +1178,7 @@ const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
             });
         });
 
-        // --- SIDEBAR INITIALIZATION ---
+        // --- SIDEBAR INITIALIZATION (MODIFIED to include all locations) ---
         const departmentList = document.getElementById('department-list');
         const buildingList = document.getElementById('building-list');
         let activeDepartmentKey = null; 
@@ -1151,77 +1192,92 @@ const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
                 const buttonContainer = document.createElement('div');
                 buttonContainer.className = 'loc-entry mb-2';
 
+                // Determine the target list
+                const targetList = loc.isDept ? departmentList : buildingList;
+                
                 // 🎓 Primary Button (Department / Building)
-    const primaryBtn = document.createElement('button');
-    primaryBtn.textContent = loc.name;
-    primaryBtn.className = `
-        w-full text-left p-2 rounded-md text-sm font-semibold text-gray-800 
-        border transition duration-200
-        ${loc.isDept 
-            ? 'bg-[#e0f5f2] hover:bg-[#c7ece6] border-[#b2e2dc]'   /* softer mint for departments */
-            : 'bg-[#e9f7f6] hover:bg-[#d3f0ed] border-[#bfe7e3]'} /* light aqua for others */
-    `;
-    primaryBtn.setAttribute('data-key', key);
-    buttonContainer.appendChild(primaryBtn);
+                const primaryBtn = document.createElement('button');
+                primaryBtn.textContent = loc.name;
+                primaryBtn.className = `
+                    w-full text-left p-2 rounded-md text-sm font-semibold text-gray-800 
+                    border transition duration-200
+                    ${loc.isDept 
+                        ? 'bg-[#e0f5f2] hover:bg-[#c7ece6] border-[#b2e2dc]'   /* softer mint for departments */
+                        : 'bg-[#e9f7f6] hover:bg-[#d3f0ed] border-[#bfe7e3]'} /* light aqua for others */
+                `;
+                primaryBtn.setAttribute('data-key', key);
+                buttonContainer.appendChild(primaryBtn);
 
-    if (loc.isDept) {
-        // 📁 Secondary Menu Container
-        const secondaryMenu = document.createElement('div');
-        secondaryMenu.id = `menu-${key}`;
-        secondaryMenu.className = `mt-1 ml-4 space-y-1 ${activeDepartmentKey === key ? '' : 'hidden'}`;
+                // 📁 Secondary Menu Container (Now created for ALL locations)
+                const secondaryMenu = document.createElement('div');
+                secondaryMenu.id = `menu-${key}`;
+                secondaryMenu.className = `mt-1 ml-4 space-y-1 ${activeDepartmentKey === key ? '' : 'hidden'}`;
 
-        // 🧑‍🏫 Services Button
-        const servicesBtn = document.createElement('button');
-        servicesBtn.textContent = 'Services 🧑‍🏫';
-        servicesBtn.className = `
-            w-full text-left p-2 rounded-md text-xs text-white font-medium
-            bg-[#118c82] hover:bg-[#0f746c]
-            shadow-md transition duration-200 transform hover:scale-[1.03]
-        `;
-        servicesBtn.onclick = () => openServicesModal(key);
-        secondaryMenu.appendChild(servicesBtn);
+                // 🧑‍🏫 Services Button
+                const servicesBtn = document.createElement('button');
+                servicesBtn.textContent = 'Services 🧑‍🏫';
+                servicesBtn.className = `
+                    w-full text-left p-2 rounded-md text-xs text-white font-medium
+                    bg-[#118c82] hover:bg-[#0f746c]
+                    shadow-md transition duration-200 transform hover:scale-[1.03]
+                `;
+                servicesBtn.onclick = () => openServicesModal(key);
+                secondaryMenu.appendChild(servicesBtn);
 
-        // 🗺️ Map (360 View) Button
-        const mapBtn = document.createElement('button');
-        mapBtn.textContent = 'Map (360° View) 🗺️';
-        mapBtn.className = `
-            w-full text-left p-2 rounded-md text-xs text-white font-medium
-            bg-[#1b9fa2] hover:bg-[#158f8e]
-            shadow-md transition duration-200 transform hover:scale-[1.03]
-        `;
-                    mapBtn.onclick = () => {
-                        // Move Pegman and open 360 view
-                        pegmanMarker.setLatLng([loc.lat, loc.lng]);
-                        pegmanMarker.setPopupContent(`Pegman reached: <b>${loc.name}</b>`);
-                        map.setView([loc.lat, loc.lng], 17);
-                        initPanorama(L.latLng(loc.lat, loc.lng), loc.name);
-                    };
-                    secondaryMenu.appendChild(mapBtn);
-                    buttonContainer.appendChild(secondaryMenu);
+                // 🗺️ Map (360 View) Button
+                const mapBtn = document.createElement('button');
+                mapBtn.textContent = 'Map (360° View) 🗺️';
+                mapBtn.className = `
+                    w-full text-left p-2 rounded-md text-xs text-white font-medium
+                    bg-[#1b9fa2] hover:bg-[#158f8e]
+                    shadow-md transition duration-200 transform hover:scale-[1.03]
+                `;
+                mapBtn.onclick = () => {
+                    // Move Pegman and open 360 view
+                    pegmanMarker.setLatLng([loc.lat, loc.lng]);
+                    pegmanMarker.setPopupContent(`Pegman reached: <b>${loc.name}</b>`);
+                    map.setView([loc.lat, loc.lng], 17);
+                    initPanorama(L.latLng(loc.lat, loc.lng), loc.name);
+                };
+                secondaryMenu.appendChild(mapBtn);
+                
+                // 🧭 Set as Route Destination Button (New Button)
+                const routeBtn = document.createElement('button');
+                routeBtn.textContent = 'Set as Route Destination 🧭';
+                routeBtn.className = `
+                    w-full text-left p-2 rounded-md text-xs text-white font-medium
+                    bg-[#5a67d8] hover:bg-[#4c56a3]
+                    shadow-md transition duration-200 transform hover:scale-[1.03]
+                `;
+                routeBtn.onclick = () => {
+                    const latlng = L.latLng(loc.lat, loc.lng);
+                    routeEndLatlng = latlng;
+                    document.getElementById('end-coords-display').textContent = `Set: ${loc.name}`;
+                    updateRouting();
+                    map.setView(latlng, 15);
+                };
+                secondaryMenu.appendChild(routeBtn);
 
-                    // Add click handler to primary button to toggle secondary menu
-                    primaryBtn.addEventListener('click', () => {
-                        // Close previously open menu
-                        if (activeDepartmentKey && activeDepartmentKey !== key) {
-                            const prevMenu = document.getElementById(`menu-${activeDepartmentKey}`);
-                            if(prevMenu) prevMenu.classList.add('hidden');
-                        }
-                        // Toggle current menu
-                        secondaryMenu.classList.toggle('hidden');
-                        activeDepartmentKey = secondaryMenu.classList.contains('hidden') ? null : key;
-                    });
+                buttonContainer.appendChild(secondaryMenu);
+
+                // Add click handler to primary button to toggle secondary menu
+                primaryBtn.addEventListener('click', () => {
+                    // Close previously open menu
+                    if (activeDepartmentKey && activeDepartmentKey !== key) {
+                        const prevMenu = document.getElementById(`menu-${activeDepartmentKey}`);
+                        if(prevMenu) prevMenu.classList.add('hidden');
+                    }
+                    // Toggle current menu
+                    secondaryMenu.classList.toggle('hidden');
+                    activeDepartmentKey = secondaryMenu.classList.contains('hidden') ? null : key;
                     
-                    departmentList.appendChild(buttonContainer);
-
-                } else {
-                    // Non-departmental buildings only move the pegman
-                    primaryBtn.addEventListener('click', () => {
-                        pegmanMarker.setLatLng([loc.lat, loc.lng]);
-                        pegmanMarker.setPopupContent(`Pegman reached:<br><b>${loc.name}</b>`);
-                        map.setView([loc.lat, loc.lng], 17);
-                    });
-                    buildingList.appendChild(buttonContainer);
-                }
+                    // Also center map on the location when the primary button is clicked
+                    pegmanMarker.setLatLng([loc.lat, loc.lng]);
+                    pegmanMarker.setPopupContent(`Pegman reached:<br><b>${loc.name}</b>`);
+                    map.setView([loc.lat, loc.lng], 17);
+                });
+                
+                targetList.appendChild(buttonContainer);
             }
         }
 
@@ -1237,4 +1293,3 @@ const CSE_IT_SYLLABUS_URL = './syllabus.pdf';
     </script>
 </body>
 </html>
-
